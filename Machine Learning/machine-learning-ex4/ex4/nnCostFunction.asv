@@ -68,14 +68,39 @@ a2 = sigmoid(a1*Theta1');
 a2 = [ones(size(a2,1),1) a2];
 a3 = sigmoid(a2*Theta2');
 
+%{
+yk = zeros(num_labels, m); 
+for i=1:m
+  yk(y(i),i)=1;
+end
+
+m
+
+p = sum(sum(Theta1(:, 2:end).^2, 2))+sum(sum(Theta2(:, 2:end).^2, 2));
+Z = sum(sum(-yk*log(a3)-(1-yk)*log(1-a3)))/m + lambda*p/(2*m);
+J = Z;
+%}
+%   + (lambda/(2*m)) * ( sum(sum(Theta1(:,2:end) .^ 2)) + sum(sum(Theta2(:,2:end) .^ 2)) );
+
 I = eye(num_labels);
 Y = zeros(m, num_labels);
 for i=1:m
   Y(i, :)= I(y(i), :);
 end
 
-reg = sum(sum(Theta1(:, 2:end).^2, 2))+sum(sum(Theta2(:, 2:end).^2, 2));
-J   = sum(sum((-Y).*log(a3) - (1-Y).*log(1-a3), 2))/m + lambda*reg/(2*m);
+
+a1 = [ones(m, 1) X];
+z2 = a1*Theta1';
+a2 = [ones(size(z2, 1), 1) sigmoid(z2)];
+z3 = a2*Theta2';
+a3 = sigmoid(z3);
+h  = a3;
+
+% calculte penalty
+p = sum(sum(Theta1(:, 2:end).^2, 2))+sum(sum(Theta2(:, 2:end).^2, 2));
+
+% calculate J
+J = sum(sum((-Y).*log(h) - (1-Y).*log(1-h), 2))/m + lambda*p/(2*m);
 
 % -------------------------------------------------------------
 
